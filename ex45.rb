@@ -24,6 +24,7 @@ class ClueGenerator
   def generateClues
     if matchValues
       puts "Yeah, what a lucky guess!!"
+      return true
     elsif @val1 + @val2 + @val3 > @guessVal1 + @guessVal2 + @guessVal3
       puts "The sum of the hidden values is 'greater' than the sum of the guess values."
     elsif @val1 + @val2 + @val3 < @guessVal1 + @guessVal2 + @guessVal3
@@ -31,6 +32,7 @@ class ClueGenerator
     elsif @val1 + @val2 + @val3 = @guessVal1 + @guessVal2 + @guessVal3
       puts "The sum of the hidden values is 'equal' to the sum of the guess values."
     end
+    return false
   end
 
   def matchValues
@@ -61,18 +63,27 @@ class Main
 
     puts "Now it's the second player's turn"
 
-    puts '-' * 20
-    puts '-' * 20
+    attempt = 0
+    guessed = false
+    while attempt < 3 && !guessed do
+      puts '-' * 20
+      puts '-' * 20
 
-    count = 0
-    while count < 3 do
-      puts "Enter the %s guess number: > " % count
-      @guestCode[count] = $stdin.gets.chomp.to_i
-      count += 1
+      count = 0
+      while count < 3 do
+        puts "Enter the %s guess number: > " % count
+        @guestCode[count] = $stdin.gets.chomp.to_i
+        count += 1
+      end
+
+      cluegenerator = ClueGenerator.new(@hiddenCode[0], @hiddenCode[1], @hiddenCode[2])
+      guessed = cluegenerator.guessValues(@guestCode[0], @guestCode[1], @guestCode[2])
+      if !guessed
+        attempt += 1
+        puts "Try again!!!"
+      end
     end
 
-    cluegenerator = ClueGenerator.new(@hiddenCode[0], @hiddenCode[1], @hiddenCode[2])
-    cluegenerator.guessValues(@guestCode[0], @guestCode[1], @guestCode[2])
 
     puts "Want to play some more (y/n)?"
     answer = $stdin.gets.chomp
